@@ -1,40 +1,58 @@
 import React, { useState } from 'react';
 import blogService from '../services/blogs';
-const Blog = ({ blog, blogs, setBlogs, setErrorMessage, setSuccessMessage, user}) => {
-  const [visible, setVisible] = useState(false);
+import { useMutation, useQueryClient } from 'react-query';
 
+const Blog = ({ blog, blogs, user}) => {
+  const [visible, setVisible] = useState(false);
+  const queryClient = useQueryClient();
   const toggleVisibility = () => {
     setVisible(!visible);
   };
+
+  const mutation = useMutation(({ id, data }) => blogService.update(id, data), {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs');
+    },
+  })
+
+  const deleteMutation = useMutation(blogService.remove, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs');
+    },
+  })
+
   const addLike = () => {
     const blogToUpdate = {
       ...blog,
       user: blog.user.id, // Only send the user ID
       likes: blog.likes + 1
     };
-    blogService
-      .update(blog.id, blogToUpdate)
-      .then((updatedBlog) => {
-        // Replace the user ID with the user object in the updated blog
-        updatedBlog.user = blog.user;
-        setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
-      });
+    mutation.mutate({ id: blog.id, data: blogToUpdate });
+
+    // blogService
+    //   .update(blog.id, blogToUpdate)
+    //   .then((updatedBlog) => {
+    //     // Replace the user ID with the user object in the updated blog
+    //     updatedBlog.user = blog.user;
+    //     setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
+    //   });
   };
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      blogService
-        .remove(blog.id)
-        .then(() => {
-          setBlogs(blogs.filter((b) => b.id !== blog.id));
-          setSuccessMessage('Blog removed successfully');
-        });
+      deleteMutation.mutate(blog.id);
+      // blogService
+      //   .remove(blog.id)
+      //   .then(() => {
+      //     setBlogs(blogs.filter((b) => b.id !== blog.id));
+      //     setSuccessMessage('Blog removed successfully');
+      //   });
     }
   };
   let removeButton = {
     display: 'none',
   };
 
-  
+
   if (user.username === blog.username) {
     removeButton = {
       display: 'block',

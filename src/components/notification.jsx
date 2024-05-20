@@ -1,24 +1,19 @@
-// Notification.jsx
-import React from 'react';
+import React, { useContext } from 'react';
+import { NotificationContext } from './NotificationContext';
 
-const Notification = ({ message }) => {
-  if (message === null) {
+const Notification = () => {
+  const { state } = useContext(NotificationContext);
+
+  if (state.message === null) {
+    console.log('state.message is null');
     return null;
   }
-
-  if (message.includes('error')) {
-    return (
-      <div className="error">
-        {message}
-      </div>
-    );
-  } else {
-    return (
-      <div className="success">
-        {message}
-      </div>
-    );
-  }
+  console.log(state.message)
+  return (
+    <div className={state.type}>
+      {state.message}
+    </div>
+  );
 };
 
 export default Notification;
