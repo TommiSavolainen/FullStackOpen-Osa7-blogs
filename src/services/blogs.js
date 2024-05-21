@@ -30,4 +30,9 @@ const remove = async (id) => {
     return response.data;
 };
 
+export const getBlog = async (id) => {
+    const response = await axios.get(`${baseUrl}/${id}`);
+    return response.data;
+};
+
 export default { getAll, setToken, create, update, remove };

@@ -9,9 +9,10 @@ import { NotificationProvider } from './components/NotificationContext'
 import { NotificationContext } from './components/NotificationContext'
 import { useQuery, useMutation, QueryClient, QueryClientProvider } from 'react-query'
 import { UserContext } from './components/UserContext'
-
-// const queryClient = new QueryClient()
-
+import User from './components/User'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import UserDetail from './components/UserDetail'
+import BlogDetail from './components/BlogDetail'
 const App = () => {
   // const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState('')
@@ -135,22 +136,52 @@ const App = () => {
 
 
   return (
-      <div>
-        <h1>Log in to application</h1>
-        <Notification message={state.message} />
-        {!user.user && loginForm()}
-        {user.user && <div>
-          <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
-          <Togglable buttonLabel='new blog' ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} user={user.user}/>
-          </Togglable>
-          <h1>Blogs</h1>
-          {blogs?.map(blog =>
-            <Blog key={blog.id} blog={blog} blogs={blogs} user={user.user} />
-          )}
+    <Router>
+      <Routes>
+        <Route path='/users' element={
+        user.user ? (
+          <div>
+            <h2>blogs</h2>
+            <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            <User />
           </div>
-        }
-      </div>
+        ) : (
+          loginForm()
+        )
+          }/>
+        <Route path='/users/:id' element={
+        user.user ? (
+          <div>
+            <h2>blogs</h2>
+            <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            <UserDetail />
+          </div>
+        ) : (
+          loginForm()
+        )
+          }/>
+        <Route path='/blogs/:id' element={<BlogDetail/>} />
+        <Route path='/' element={
+        <div>
+          <h1>Log in to application</h1>
+          <Notification message={state.message} />
+          {!user.user && loginForm()}
+          {user.user && 
+            <div>
+              <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+              <Togglable buttonLabel='new blog' ref={blogFormRef}>
+                <BlogForm createBlog={addBlog} user={user.user}/>
+              </Togglable>
+              <h1>Blogs</h1>
+              {blogs?.map(blog =>
+                <Blog key={blog.id} blog={blog} blogs={blogs} user={user.user} />
+              )}
+            </div>
+          }
+        </div>
+      }/>
+      </Routes>
+    </Router>
   )
 }
 

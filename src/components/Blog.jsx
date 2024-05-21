@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import blogService from '../services/blogs';
 import { useMutation, useQueryClient } from 'react-query';
+import { Link } from 'react-router-dom';
 
 const Blog = ({ blog, blogs, user}) => {
   const [visible, setVisible] = useState(false);
@@ -28,14 +29,6 @@ const Blog = ({ blog, blogs, user}) => {
       likes: blog.likes + 1
     };
     mutation.mutate({ id: blog.id, data: blogToUpdate });
-
-    // blogService
-    //   .update(blog.id, blogToUpdate)
-    //   .then((updatedBlog) => {
-    //     // Replace the user ID with the user object in the updated blog
-    //     updatedBlog.user = blog.user;
-    //     setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)));
-    //   });
   };
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
@@ -61,15 +54,15 @@ const Blog = ({ blog, blogs, user}) => {
   
   return (
     <div className='note'>
-      {blog.title} {blog.author} <button onClick={toggleVisibility} className='viewButton'>{visible ? 'hide' : 'view'}</button>
-      {visible && (
+      <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link> 
+      {/* {visible && (
         <div>
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={addLike} className='likeButton'>like</button></p>
           <p>{blog.user.name}</p>
           <button style={removeButton} id='remove-button' onClick={removeBlog}>remove</button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
