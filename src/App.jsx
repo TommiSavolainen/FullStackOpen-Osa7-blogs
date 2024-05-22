@@ -10,7 +10,7 @@ import { NotificationContext } from './components/NotificationContext'
 import { useQuery, useMutation, QueryClient, QueryClientProvider } from 'react-query'
 import { UserContext } from './components/UserContext'
 import User from './components/User'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import UserDetail from './components/UserDetail'
 import BlogDetail from './components/BlogDetail'
 const App = () => {
@@ -142,7 +142,9 @@ const App = () => {
         user.user ? (
           <div>
             <h2>blogs</h2>
-            <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            <div className='nav'>
+            <p><Link to={'/'} >blogs</Link> <Link to={'/users'}>users</Link> {user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            </div>
             <User />
           </div>
         ) : (
@@ -153,7 +155,9 @@ const App = () => {
         user.user ? (
           <div>
             <h2>blogs</h2>
-            <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            <div className='nav'>
+            <p><Link to={'/'}>blogs</Link> <Link to={'/users'}>users</Link> {user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+            </div>
             <UserDetail />
           </div>
         ) : (
@@ -168,7 +172,9 @@ const App = () => {
           {!user.user && loginForm()}
           {user.user && 
             <div>
-              <p>{user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+              <div className='nav'>
+              <p><Link to={'/'}>blogs</Link> <Link to={'/users'}>users</Link> {user.user.name} logged-in <button onClick={handleLogout}>logout</button></p>
+              </div>
               <Togglable buttonLabel='new blog' ref={blogFormRef}>
                 <BlogForm createBlog={addBlog} user={user.user}/>
               </Togglable>
